@@ -1,0 +1,22 @@
+roscore
+
+cd Downloads/
+./play_data.sh
+
+roslaunch ur_gazebo ur5e_bringup.launch
+
+rosrun ur5e_control manual_initialization.py
+
+rosrun ur5e_control ur5e_controller
+
+
+roslaunch ur5e_control frame_publisher.launch
+
+rosrun rviz rviz
+	config robot_ball
+
+cd catkin_ws/src/robotics_lab6/scripts/
+python3 detect_ball.py
+
+cd catkin_ws/src/robotics_lab6/scripts/
+python3 sphere_fit.py

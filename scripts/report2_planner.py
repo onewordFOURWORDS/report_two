@@ -5,17 +5,28 @@ import math
 
 # import the plan message
 from ur5e_control.msg import Plan
-from geometry_msgs.msg import Twist
-from robot_vision_lectures.msg import XYZarray
+from geometry_msgs.msg import Twist 
+from robot_vision_lectures.msg import SphereParams
 
-points_received = False
+start_pos_rec = False
+ball_pos_rec = False
+
 def get_points(XYZ):
-	print("?")
-	global points_received
+	global start_pos_rec
 	global start_pos
-	start_pos = XYZ.points
+	start_pos = XYZ
+	start_pos_rec = True
+	print(1)
+
+
+def get_ball(points):
+	print(2)
+	global ball_pos_rec
+	global ball_pos
+	ball_pos = points
+	ball_pos_rec = True
 	
-	points_received = True
+	
 	
 def main():
 	# initialize the node
@@ -23,12 +34,9 @@ def main():
 	
 	# create subscriber for ur5e/toolpose coordinates
 	# this is used for the starting point position to avoid jumps
-	print(1)
-	print(points_received)
-	toolpose = rospy.Subscriber('ur5e/toolpose', XYZarray, get_points)
-	print(2)
-	print(points_received)
-	print(toolpose)
+	toolpose = rospy.Subscriber('ur5e/toolpose', Twist, get_points)
+	# get the ball center coordinates
+	ball = rospy.Subscriber('/sphere_params', SphereParams, get_ball)
 	# add a publisher for sending joint position commands
 	plan_pub = rospy.Publisher('/plan', Plan, queue_size = 10)
 	
@@ -36,24 +44,24 @@ def main():
 	loop_rate = rospy.Rate(10)
 	
 	while not rospy.is_shutdown():
-		if points_received:
-			print(start_pos)
+		if start_pos_rec and ball_pos_rec:
 			# define a plan variable
 			plan = Plan()
+			
+			
 			plan_point1 = Twist()
-			# just a quick solution to send two target points
-			# define a point close to the initial position
-			plan_point1.linear.x = 0
-			plan_point1.linear.y = -0.23
-			plan_point1.linear.z = 0.363
-			plan_point1.angular.x = 1.157
-			plan_point1.angular.y = 0.0
-			plan_point1.angular.z = 0.0
+			# Use the current robot position coordinates as these points to avoid jumps
+			plan_point1.linear.x = start_pos.linear.x
+			plan_point1.linear.y = start_pos.linear.y
+			plan_point1.linear.z = start_pos.linear.z
+			plan_point1.angular.x = start_pos.angular.x
+			plan_point1.angular.y = start_pos.angular.y
+			plan_point1.angular.z = start_pos.angular.z
 			# add this point to the plan
 			plan.points.append(plan_point1)
-			
-			# this point is the ball location 
-			
+			print(plan_point1)
+			print(ball_pos)
+			# use the ball center coordinates for this point
 			plan_point2 = Twist()
 			# define a point away from the initial position
 			plan_point2.linear.x = 0
@@ -65,8 +73,9 @@ def main():
 			# add this point to the plan
 			plan.points.append(plan_point2)
 			
+			
 			plan_point3 = Twist()
-			# define a point away from the initial position
+			# This point can be anything (any point above the "drop" positon
 			plan_point3.linear.x = -0.6
 			plan_point3.linear.y = -0.6
 			plan_point3.linear.z = 0.3
@@ -76,8 +85,9 @@ def main():
 			# add this point to the plan
 			plan.points.append(plan_point3)
 			
+			
 			plan_point4 = Twist()
-			# define a point away from the initial position
+			# this point can be anthing (the "drop" positon)
 			plan_point4.linear.x = -0.6
 			plan_point4.linear.y = -0.6
 			plan_point4.linear.z = 0.05
