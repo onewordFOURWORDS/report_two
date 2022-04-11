@@ -9,11 +9,15 @@ rosrun ur5e_control manual_initialization.py
 
 rosrun ur5e_control ur5e_controller
 
+rosrun ur5e_control task_space_traj
+
 
 roslaunch ur5e_control frame_publisher.launch
 
-rosrun rviz rviz
+rosrun rviz rviz 
 	config robot_ball
+
+rosrun robot_vision_lectures crop_visualize_3D
 
 cd catkin_ws/src/robotics_lab6/scripts/
 python3 detect_ball.py
