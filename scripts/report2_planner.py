@@ -70,6 +70,7 @@ def main():
 			plan.points.append(plan_point1)
 			
 			
+			
 			########################
 			# FRAME TRANSFORMATION #
 			########################
@@ -106,13 +107,26 @@ def main():
 			# END FRAME TRANSFORMATION #
 			############################
 			
+			# get a position above the ball center position
+			plan_point1b = Twist()
+			# define a point away from the initial position
+			plan_point1b.linear.x = pt_in_base.point.x
+			plan_point1b.linear.y = pt_in_base.point.y
+			plan_point1b.linear.z = pt_in_base.point.z + 0.15
+			plan_point1b.angular.x = 3.14
+			plan_point1b.angular.y = 0
+			plan_point1b.angular.z = 0
+			# add this point to the plan
+			plan.points.append(plan_point1b)
+			
+			
 			# use the ball center coordinates for this point
 			plan_point2 = Twist()
 			# define a point away from the initial position
-			plan_point2.linear.x = ball_pos.xc
-			plan_point2.linear.y = ball_pos.yc
-			plan_point2.linear.z = ball_pos.zc
-			plan_point2.angular.x = 0
+			plan_point2.linear.x = pt_in_base.point.x
+			plan_point2.linear.y = pt_in_base.point.y
+			plan_point2.linear.z = pt_in_base.point.z
+			plan_point2.angular.x = 3.14
 			plan_point2.angular.y = 0
 			plan_point2.angular.z = 0
 			# add this point to the plan
@@ -121,8 +135,8 @@ def main():
 			
 			plan_point3 = Twist()
 			# This point can be anything (any point above the "drop" positon
-			plan_point3.linear.x = -0.6
-			plan_point3.linear.y = -0.6
+			plan_point3.linear.x = -0.3
+			plan_point3.linear.y = -0.3
 			plan_point3.linear.z = 0.3
 			plan_point3.angular.x = 3.14
 			plan_point3.angular.y = 0.0
@@ -133,8 +147,8 @@ def main():
 			
 			plan_point4 = Twist()
 			# this point can be anthing (the "drop" positon)
-			plan_point4.linear.x = -0.6
-			plan_point4.linear.y = -0.6
+			plan_point4.linear.x = -0.3
+			plan_point4.linear.y = -0.3
 			plan_point4.linear.z = 0.05
 			plan_point4.angular.x = 3.14
 			plan_point4.angular.y = 0.0
